@@ -1,0 +1,5 @@
+{
+  // VS Code でこのフォルダを開くと「Live Server」のインストールをすすめる。
+  // 入れると右下に「Go Live」が出て、押すとブラウザでサイトのプレビューが開く（保存すると自動で更新）。
+  "recommendations": ["ritwickdey.LiveServer"]
+}
