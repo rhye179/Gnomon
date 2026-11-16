@@ -273,9 +273,9 @@
     details.unit > summary::before {
       content: ""; flex: none; width: 28px; height: 28px; border-radius: 50%;
       background: var(--surface-subtle) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23141518' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 12px no-repeat;
-      transform: rotate(-90deg);
+      transform: rotate(-90deg); transition: transform .25s ease;
     }
-    details.unit[open] > summary::before { transform: none; }
+    details.unit[open]:not(.closing) > summary::before { transform: none; }   /* .closing は閉じる途中（JS が付ける） */
     .unit-body { padding: 0 18px 6px 58px; }
     .unit-body > p { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 10px; }
     @media (max-width: 640px) { .unit-body { padding: 0 16px 6px; } }
@@ -723,6 +723,35 @@
       if (!a || !isPdf(a.getAttribute('href'))) return;
       e.preventDefault();
       openReader(a.getAttribute('href'), (a.querySelector('.res-name') || a).textContent.trim());
+    });
+
+    // ---------- 教材リスト：回の開け閉めをなめらかにする ----------
+    //   見出しをタップしたとき、中身（.unit-body）の高さを 0.25 秒かけて変える。
+    //   端末の「視差効果を減らす」設定がオンなら、ふつうにパッと開け閉めする。
+    document.addEventListener('click', e => {
+      const summary = e.target.closest('details.unit > summary');
+      if (!summary) return;
+      const unit = summary.parentElement;
+      const body = unit.querySelector('.unit-body');
+      if (!body || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      e.preventDefault();
+      const opening = !unit.open || unit.classList.contains('closing');
+      const from = unit.open ? body.offsetHeight : 0;   // 動いている途中なら、今の高さから
+      if (unit.anim) unit.anim.cancel();
+      unit.open = true;
+      unit.classList.toggle('closing', !opening);
+      const to = opening ? body.scrollHeight : 0;
+      body.style.overflow = 'hidden';
+      const pad = getComputedStyle(body).paddingBottom;   // 下の余白も 0 まで縮めないと、最後に少し跳ねる
+      const frame = h => ({ height: h + 'px', paddingBottom: h ? pad : '0px' });
+      const anim = body.animate([frame(from), frame(to)], { duration: 250, easing: 'ease', fill: 'forwards' });
+      unit.anim = anim;
+      anim.onfinish = () => {
+        unit.anim = null;
+        body.style.overflow = '';
+        if (!opening) { unit.open = false; unit.classList.remove('closing'); }
+        anim.cancel();   // 高さの固定を外す（閉じ終わりに一瞬だけ元の高さに戻るのを防ぐため fill で止めていた）
+      };
     });
 
     // ---------- KaTeX：data-tex から描画。1式エラーでも他は止めない ----------
