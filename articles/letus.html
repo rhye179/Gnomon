@@ -1,0 +1,34 @@
+<!--
+  新しい記事のひな形。
+  1. このファイルをコピーして、名前を変える（例：canonical-ensemble.html）
+     ・ファイル名が記事のアドレスになる（…/#canonical-ensemble）
+     ・英小文字・数字・ハイフンだけにする
+  2. articles/list.txt にファイル名を1行足す（canonical-ensemble）
+  3. 下の中身を書き換える
+
+  data-letter … サムネイルと見出しで六角形に組む文字（省略するとファイル名の頭文字）
+  data-date   … 日付。入れた記事だけトップの RECENT ARTICLES に新しい順で3件まで出る
+  data-field  … 絞り込み用の分野：guide / stat / quant / mech / math
+  data-tag    … 日付の横に出る分野名
+  data-pdf    … 任意。本文の最後に PDF を付ける（例：pdfs/xxx.pdf）。いらなければ消す
+-->
+<section class="post" data-letter="L"
+         data-date="2026-11-17" data-field="quide"
+         data-tag="Guide">
+  <h1 class="post-title">Letus風ページ</h1>
+  <p class="post-abstract">Letusの機能を再現してみたやつ</p>
+  <div class="post-body">
+    <p>本文。文中の式は <span class="tex-inline" data-tex="E = mc^2"></span> のように書く。</p>
+
+    <h2><span class="num-box"><svg class="hexmark" data-text="1" data-top="20" data-detail="5" aria-label="1"></svg></span>節の見出し</h2>
+    <div class="math-display" data-tex="Z = \sum_i e^{-\beta E_i}"></div>
+  </div>
+  <div class="materials">
+    <details class="unit" open>
+        <summary>統計力学B1</summary>
+        <div class="unit-body">
+            <a class="res" href="pdfs/統計力学B1.pdf">講義ノート</a>
+        </div>
+    </details>
+  </div>
+</section>
